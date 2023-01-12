@@ -17,7 +17,7 @@ import { ConfigService } from '@nestjs/config';
         return ClientProxyFactory.create({
           transport: Transport.TCP,
           options: {
-            host: configService.get('SERVICE_HOST'),
+            host: configService.get('ROOM_SERVICE_HOST'),
             port: configService.get('ROOM_SERVICE_PORT'),
           },
         });

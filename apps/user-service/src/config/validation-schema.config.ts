@@ -12,8 +12,9 @@ const TYPE_ORM_LOGGING = [
 
 export const validationSchema = Joi.object({
   PORT: Joi.number().required(),
-  SERVICE_HOST: Joi.string().required(),
+  ROOM_SERVICE_HOST: Joi.string().required(),
   ROOM_SERVICE_PORT: Joi.number().required(),
+  USER_SERVICE_HOST: Joi.string().required(),
   USER_SERVICE_PORT: Joi.number().required(),
 
   DB_TYPE: Joi.string().required(),
