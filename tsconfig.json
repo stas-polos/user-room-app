@@ -23,6 +23,18 @@
       ],
       "@app/common/*": [
         "libs/common/src/*"
+      ],
+      "@app/common/auth": [
+        "libs/common/auth/src"
+      ],
+      "@app/common/auth/*": [
+        "libs/common/auth/src/*"
+      ],
+      "@app/common/src/auth": [
+        "libs/common/src/auth/src"
+      ],
+      "@app/common/src/auth/*": [
+        "libs/common/src/auth/src/*"
       ]
     }
   }
