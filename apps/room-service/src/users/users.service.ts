@@ -25,15 +25,24 @@ export class UsersService {
     authUser: AuthenticatableInterface,
     roomId: string = null,
   ): Promise<User> {
-    await this.userRepository.update({ id: authUser.id }, { roomId });
+    await this.userRepository.update({ email: authUser.email }, { roomId });
 
-    return this.getById(authUser.id);
+    return this.getByEmail(authUser.email);
   }
 
   public getById(id: string): Promise<User | undefined> {
     return this.userRepository.findOne(
       {
         id,
+      },
+      { relations: ['room'] },
+    );
+  }
+
+  public getByEmail(email: string): Promise<User | undefined> {
+    return this.userRepository.findOne(
+      {
+        email,
       },
       { relations: ['room'] },
     );

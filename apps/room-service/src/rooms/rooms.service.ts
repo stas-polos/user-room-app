@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Inject,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,6 +17,7 @@ import { User } from '../users/user.entity';
 
 @Injectable()
 export class RoomsService {
+  private readonly logger = new Logger(RoomsService.name);
   microserviceClients: { [key: string]: ClientProxy } = {};
 
   constructor(
@@ -52,7 +54,7 @@ export class RoomsService {
       room.users.map(async ({ id, email, roomId }) => {
         await Promise.all([
           this.usersService.entranceOrExitToRoom({ id, email, roomId }),
-          this.entranceOrExitToRoom(id),
+          this.entranceOrExitToRoom(email),
         ]);
       }),
     ]);
@@ -74,9 +76,10 @@ export class RoomsService {
       throw new BadRequestException(['You are already in the room']);
     }
 
+    this.logger.debug(authUser, id);
     await Promise.all([
-      this.usersService.entranceOrExitToRoom(authUser, id),
-      this.entranceOrExitToRoom(authUser.id, true),
+      await this.usersService.entranceOrExitToRoom(authUser, id),
+      await this.entranceOrExitToRoom(authUser.email, true),
     ]);
 
     return this.usersService.getById(authUser.id);
@@ -97,7 +100,7 @@ export class RoomsService {
 
     await Promise.all([
       this.usersService.entranceOrExitToRoom(authUser),
-      this.entranceOrExitToRoom(authUser.id),
+      this.entranceOrExitToRoom(authUser.email),
     ]);
 
     return this.usersService.getById(authUser.id);
@@ -112,10 +115,10 @@ export class RoomsService {
       .toPromise();
   }
 
-  private entranceOrExitToRoom(userId: string, inRoom = false): Promise<User> {
+  private entranceOrExitToRoom(email: string, inRoom = false): Promise<User> {
     return this.clientProxy
       .send('entrance-or-exit-to-room', {
-        id: userId,
+        email,
         inRoom,
       })
       .pipe()

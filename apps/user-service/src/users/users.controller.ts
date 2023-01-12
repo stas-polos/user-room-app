@@ -42,9 +42,9 @@ export class UsersController {
   @MessagePattern('entrance-or-exit-to-room')
   @UseInterceptors(ClassSerializerInterceptor)
   entranceOrExitToRoom(
-    @Payload() user: { id: string; inRoom: boolean },
+    @Payload() user: { email: string; inRoom: boolean },
   ): Promise<User> {
-    return this.usersService.entranceOrExitToRoom(user.id, user.inRoom);
+    return this.usersService.entranceOrExitToRoom(user.email, user.inRoom);
   }
 
   @MessagePattern('check-user-in-room')

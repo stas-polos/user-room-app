@@ -51,17 +51,17 @@ export class UsersService {
   }
 
   public async entranceOrExitToRoom(
-    id: string,
+    email: string,
     inRoom: boolean,
   ): Promise<User> {
-    await this.userRepository.update({ id }, { inRoom });
-    return this.getById(id);
+    await this.userRepository.update({ email }, { inRoom });
+    return this.getByEmail(email);
   }
 
   public async checkUserInRoom(
     authUser: AuthenticatableInterface,
   ): Promise<boolean | undefined> {
-    const user = await this.getById(authUser.id);
+    const user = await this.getByEmail(authUser.email);
 
     return user?.inRoom;
   }
