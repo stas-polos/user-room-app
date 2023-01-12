@@ -1,0 +1,53 @@
+services:
+  room-service:
+    build:
+      context: .
+      dockerfile: ./apps/room-service/Dockerfile
+      target: development
+    command: > 
+      sh -c "npm run migration:run:room 
+      && npm run start:dev room-service"
+    env_file:
+      - ./apps/room-service/.env
+    depends_on:
+      - postgres-db
+      - rabbitmq
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3002:3002'
+  user-service:
+    build:
+      context: .
+      dockerfile: ./apps/user-service/Dockerfile
+      target: development
+    command: > 
+      sh -c "npm run migration:run:user
+      && npm run start:dev user-service"
+    env_file:
+      - ./apps/user-service/.env
+    depends_on:
+      - postgres-db
+      - rabbitmq
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3001:3001'
+  rabbitmq:
+    image: rabbitmq
+    hostname: rabbitmq
+    ports:
+      - '5672:5672'
+  postgres-db:
+    image: postgres:latest
+    hostname: postgres
+    volumes:
+      - ./docker-postgresql-multiple-databases:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES=first_database,second_database
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
